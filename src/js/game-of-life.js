@@ -73,6 +73,7 @@ function startGame()
     stage.removeChild(inputGrid);
     initGameGrid();
     stage.addChild(gameGrid);
+    setInterval(createNextGeneration, 100);    
     stage.update();
 }
 
@@ -98,18 +99,60 @@ function initGameGrid()
     fillContainerWithCells(gameGrid, gameGridCells, { x : 0, y : 0 }, cell_width);
 }
 
-function createNextGeneration()
-{
-    var nextGenStyle = [];
+function updateGridCells(styles) {
+    var w,h;
     gameGridCells.forEach((row, i) => {
         row.forEach((cell, j) => {
-            nextGenStyle.push(killOrRevive(cell, i, j));
+            [w, h] = [cell.graphics.instructions[1].w, cell.graphics.instructions[1].h] 
+            cell.graphics.clear();
+            cell.graphics.beginFill(styles[i][j]).drawRect(0, 0, w, h);
         });
     });
+    stage.update();
 }
 
-function killOr
-//fill container with cells
-//click event on cells
-//prompt submit facility
-//display cell pattern on screen
+function createNextGeneration() {
+    console.trace("nextGen");
+    var nextGenStyle = [];
+    gameGridCells.forEach((row, i) => {
+        genRow = []
+        row.forEach((cell, j) => {
+            genRow.push(newColor(cell, i, j));
+        });
+        nextGenStyle.push(genRow);
+    });
+    updateGridCells(nextGenStyle);
+}
+
+function newColor(cell, ir, ic) {
+    var rows = gameGridCells.length;
+    var cols = gameGridCells[0].length;
+    coords = {start: {x: ir-1, y: ic-1}, end: {x: ir+1, y: ic+1}};
+    
+    if (coords.start.x < 0)
+        coords.start.x = 0;
+    if (coords.start.y < 0)
+        coords.start.y = 0;
+    if (coords.end.x >= rows)
+        coords.end.x = rows-1;
+    if (coords.end.y >= cols)
+        coords.end.y = cols-1;
+
+    var liveCount = 0;
+    for(var i = coords.start.x; i<=coords.end.x; i++) {
+        for(var j = coords.start.y; j<=coords.end.y; j++) {
+            if (i == ir && j == ic)
+                continue;
+            if (gameGridCells[i][j].graphics.instructions[2].style == LIVE_CELL_COLOR) {
+                liveCount = liveCount+1;
+            }
+        }
+    }
+    
+    if (liveCount > 3 || liveCount < 2)
+        return DEAD_CELL_COLOR;
+    else if (liveCount == 3)  
+        return LIVE_CELL_COLOR;
+    else 
+        return cell.graphics.instructions[2].style;
+}

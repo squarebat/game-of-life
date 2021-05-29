@@ -46,7 +46,6 @@ function fillContainerWithCells(container, cellArray, coords, cell_width) {
 function updateCellState(cellArray1, cellArray2)
 {
     var rows1, rows2, cols1 = 0, cols2 = 0;
-    console.table(cellArray1[0][0].graphics.instructions);
     [rows1, rows2] = [cellArray1.length, cellArray2.length];
     if (rows1 > 0) cols1 = cellArray1[0].length; 
     if (rows2 > 0) cols2 = cellArray2[0].length; 
