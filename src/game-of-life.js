@@ -1,23 +1,29 @@
 var canvas;			
 var stage;			
 var messageField;
+var inputDialog;
 var inputGrid;
 var inputGridCells = [];		
-var inputGridRows = 6;
-var inputGridCols = 6;
+var inputGridRows = 10;
+var inputGridCols = 10;
 var DIALOG_BG_COLOR = "#ffffff";
 var LIVE_CELL_COLOR = "#ffffff";
 var DEAD_CELL_COLOR = "#000000";
 var CELL_WIDTH = 40;
+var font = "Arial"
     
+function textCenterAlign(text)
+{
+    text.textAlign = "center";
+	text.textBaseline = "middle";
+}
 function init() {
     console.trace('init');
 	canvas = document.getElementById("gameCanvas");
 	stage = new createjs.Stage(canvas);
-	messageField = new createjs.Text("Welcome! Click to play", "bold 24px Arial", "#FFFFFF");
-	messageField.maxWidth = 1000;
-	messageField.textAlign = "center";
-	messageField.textBaseline = "middle";
+	messageField = new createjs.Text("Welcome! Click to play", `bold 24px ${font}`, "#FFFFFF");
+    messageField.maxWidth = 1000;
+    textCenterAlign(messageField);
 	messageField.x = canvas.width / 2;
 	messageField.y = canvas.height / 2;
 	stage.addChild(messageField);
@@ -29,24 +35,45 @@ function handleClick() {
     console.trace('handleClick');
     canvas.onclick = null;
     stage.removeChild(messageField);
-    initInputGrid();
+    initDialog();
     stage.addChild(inputGrid);
     stage.update();
 }
 
 function initDialog()
 {
+    var pad_x = 2;
+    var pad_y = 3;
+    var text_pad = 1.7;
+
     var cell_width = CELL_WIDTH;
-    inputDialog = new createjs.Container();
-    var width = (inputGridRows+2)*cell_width;
-    var height = (inputGridCols+3)*cell_width;
+    inputGrid = new createjs.Container();
+    var width = (inputGridRows+pad_x)*cell_width;
+    var height = (inputGridCols+pad_y)*cell_width;
     var graphics = new createjs.Graphics().beginFill(DIALOG_BG_COLOR).drawRect(0, 0, width, height);
     var bg = new createjs.Shape(graphics);
-    inputDialog.x = (canvas.width / 2 - width / 2);
-    inputDialog.y = (canvas.height / 2 - width / 2);
-    inputDialog.addChild(bg);
-    //initInputGrid();
-    inputDialog.addChild(inputGrid);
+    inputGrid.x = (canvas.width / 2 - width / 2);
+    inputGrid.y = (canvas.height / 2 - height / 2);
+    
+    inputGrid.addChild(bg);
+    fillInputGrid();
+    
+    var msg_string = `Click anywhere on the grid to create the initial generation. \n Then press any key to start game`;
+    var msg = new createjs.Text(msg_string, `bold 15px ${font}`, "#000000");
+    msg.maxWidth = 1000;
+    textCenterAlign(msg);
+	msg.x = width / 2;
+    msg.y = (inputGridRows+text_pad)*cell_width;
+    
+    inputGrid.addChild(msg);
+    document.addEventListener("keydown", startGame);
+}
+
+function startGame()
+{
+    console.trace('startGame');
+    stage.removeChild(inputGrid);
+    stage.update();
 }
 
 function getRandomColor() {
@@ -97,20 +124,17 @@ function fillCellArray()
     }
 }
 
-function initInputGrid()
+function fillInputGrid()
 {
-    var cell_width = CELL_WIDTH;
-    var grid_width = inputGridRows*cell_width;
-    var grid_height = inputGridCols*cell_width;
-    var grid_x = (canvas.width / 2 - grid_width / 2);
-    var grid_y = (canvas.height / 2 - grid_height / 2);
-    inputGrid = new createjs.Container();
-    [ inputGrid.x, inputGrid.y ]  = [ grid_x, grid_y ]; 
+    console.trace('fillInputGrid');
+    var cell_width = CELL_WIDTH;  
+    var grid_x = cell_width;
+    var grid_y = cell_width;
     fillCellArray();
     inputGridCells.forEach((row, i) => {
         row.forEach((cell, j) => {
-            cell.x = cell_width*i; 
-            cell.y = cell_width*j;
+            cell.x = grid_x + cell_width*i; 
+            cell.y = grid_y + cell_width*j;
             inputGrid.addChild(cell);
         });
     });
@@ -119,3 +143,4 @@ function initInputGrid()
 //fill container with cells
 //click event on cells
 //prompt submit facility
+//display cell pattern on screen
