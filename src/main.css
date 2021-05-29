@@ -1,0 +1,7 @@
+.canvas-style {
+    background : black;
+}
+@font-face {
+    font-family: "Flipps-Regular";
+    src: url('/Flipps-Regular.otf'); 
+}
