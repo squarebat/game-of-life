@@ -11,12 +11,9 @@ var LIVE_CELL_COLOR = "#ffffff";
 var DEAD_CELL_COLOR = "#000000";
 var CELL_WIDTH = 40;
 var font = "Arial"
-    
-function textCenterAlign(text)
-{
-    text.textAlign = "center";
-	text.textBaseline = "middle";
-}
+var gameGrid;
+var gameGridCells = [];
+
 function init() {
     console.trace('init');
 	canvas = document.getElementById("gameCanvas");
@@ -72,56 +69,11 @@ function initDialog()
 function startGame()
 {
     console.trace('startGame');
+    document.removeEventListener("keydown", startGame);
     stage.removeChild(inputGrid);
+    initGameGrid();
+    stage.addChild(gameGrid);
     stage.update();
-}
-
-function getRandomColor() {
-    var letters = '456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * letters.length)];
-    }
-    return color;
-}
-  
-
-function createCell(live = false)
-{
-    var color = live ? LIVE_CELL_COLOR : DEAD_CELL_COLOR;
-    var cell_width = CELL_WIDTH;
-    var graphics = new createjs.Graphics().beginFill(color).drawRect(0, 0, cell_width, cell_width);
-    var cell = new createjs.Shape(graphics);
-    cell.addEventListener("click", updateCell);
-    return cell;
-}
-
-function updateCell(event)
-{
-    var cell = event.target;
-    var cell_width = CELL_WIDTH;
-    var color = cell.graphics.instructions[2].style;
-    cell.graphics.clear();
-    cell.graphics.beginFill(DEAD_CELL_COLOR).drawRect(0, 0, cell_width, cell_width);
-    if (color == DEAD_CELL_COLOR)
-    {
-        cell.graphics.clear();
-        cell.graphics.beginFill(LIVE_CELL_COLOR).drawRect(0, 0, cell_width, cell_width);
-    }
-    stage.update();
-}
-
-function fillCellArray()
-{
-    for (var i = 0; i < inputGridRows; i++)
-    {
-        var row = [];
-        for (var j = 0; j< inputGridCols; j++)
-        {
-            row.push(createCell());
-        }
-        inputGridCells.push(row);
-    }
 }
 
 function fillInputGrid()
@@ -130,16 +82,33 @@ function fillInputGrid()
     var cell_width = CELL_WIDTH;  
     var grid_x = cell_width;
     var grid_y = cell_width;
-    fillCellArray();
-    inputGridCells.forEach((row, i) => {
+    fillCellArray(inputGridCells, inputGridRows, inputGridCols, cell_width, true);
+    fillContainerWithCells(inputGrid, inputGridCells, { x : grid_x, y : grid_y }, cell_width);
+}
+
+function initGameGrid()
+{
+    var cell_width = CELL_WIDTH / 2;
+    console.log({cell_width});
+    rows = canvas.width/cell_width;
+    cols = canvas.height/cell_width;
+    fillCellArray(gameGridCells, rows, cols, cell_width);
+    updateCellState(gameGridCells, inputGridCells);
+    gameGrid = new createjs.Container();
+    fillContainerWithCells(gameGrid, gameGridCells, { x : 0, y : 0 }, cell_width);
+}
+
+function createNextGeneration()
+{
+    var nextGenStyle = [];
+    gameGridCells.forEach((row, i) => {
         row.forEach((cell, j) => {
-            cell.x = grid_x + cell_width*i; 
-            cell.y = grid_y + cell_width*j;
-            inputGrid.addChild(cell);
+            nextGenStyle.push(killOrRevive(cell, i, j));
         });
     });
 }
 
+function killOr
 //fill container with cells
 //click event on cells
 //prompt submit facility
