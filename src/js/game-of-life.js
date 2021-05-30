@@ -5,7 +5,7 @@ var inputDialog;
 var inputGrid;
 var inputGridCells = [];		
 var inputGridRows = 54;
-var inputGridCols = 19;
+var inputGridCols = 29;
 var DIALOG_BG_COLOR = "#ffffff";
 var LIVE_CELL_COLOR = "#ffffff";
 var DEAD_CELL_COLOR = "#00004d";
