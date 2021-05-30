@@ -1,7 +1,11 @@
-function createCell(cell_width, addListener = false, live = false) {
+function createCell(cell_width, addListener = false, addShadow = false, live = false) {
     var color = live ? LIVE_CELL_COLOR : DEAD_CELL_COLOR;
-    var graphics = new createjs.Graphics().beginFill(color).drawRect(0, 0, cell_width, cell_width);
+    var graphics;
+    graphics = new createjs.Graphics().beginFill(color).drawRect(0, 0, cell_width, cell_width);
+
     var cell = new createjs.Shape(graphics);
+    if (addShadow)
+        cell.shadow = new createjs.Shadow(LIVE_CELL_COLOR, 0, 0, 1);
     if (addListener)
         cell.addEventListener("click", updateCell);
     return cell;
@@ -21,13 +25,13 @@ function updateCell(event) {
     stage.update();
 }
 
-function fillCellArray(cellArray, rows, cols, cell_width, addListener = false) {
+function fillCellArray(cellArray, rows, cols, cell_width, addListener = false, addStroke = false) {
     for (var i = 0; i < rows; i++)
     {
         var row = [];
         for (var j = 0; j< cols; j++)
         {
-            row.push(createCell(cell_width, addListener));
+            row.push(createCell(cell_width, addListener, addStroke));
         }
         cellArray.push(row);
     }

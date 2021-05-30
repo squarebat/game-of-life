@@ -14,6 +14,10 @@ var font = "Courier"
 var gameGrid;
 var gameGridCells = [];
 var NEXT_GEN_TIME = 0;
+var populationField;
+var population = 0;
+var iterField;
+var iterCount = 1;
 function init() {
     console.trace('init');
 	canvas = document.getElementById("gameCanvas");
@@ -63,10 +67,26 @@ function fillText()
     stage.addChild(rules);
 }
 
+function fillPopulationText()
+{
+    stage.removeChild(populationField);
+    stage.removeChild(iterField);
+    populationField = new createjs.Text(`Population: ${population}`, `22px ${font}`, LIVE_CELL_COLOR);
+    populationField.shadow = new createjs.Shadow(LIVE_CELL_COLOR, 0, 0, 3);
+    iterField = new createjs.Text(`Generation: ${iterCount}`, `22px ${font}`, LIVE_CELL_COLOR);
+    iterField.shadow = new createjs.Shadow(LIVE_CELL_COLOR, 0, 0, 3);
+    placeText(populationField,0,5);  
+    placeText(iterField,0,25);  
+    
+    stage.addChild(populationField);
+    stage.addChild(iterField);
+}
+
 function placeText(field, x, y)
 {
     [field.x, field.y] = [x, y];
 }
+
 function handleClick() {
     console.trace('handleClick');
     canvas.onclick = null;
@@ -115,9 +135,21 @@ function startGame()
     stage.removeChild(inputGrid);
     initGameGrid();
     stage.addChild(gameGrid);
+    //countInitialPopulation();
+    //fillPopulationText();
     //document.addEventListener("keydown", createNextGeneration);
     setInterval(createNextGeneration, NEXT_GEN_TIME);    
     stage.update();
+}
+
+function countInitialPopulation()
+{
+    inputGridCells.forEach(row => {
+        row.forEach(cell => {
+            if (cell.graphics.instructions[2].style == LIVE_CELL_COLOR)
+                population++;
+        });
+    });
 }
 
 function fillInputGrid()
@@ -167,6 +199,9 @@ function createNextGeneration() {
         });
         nextGenStyle.push(genRow);
     });
+    if(population != 0)
+        iterCount ++;
+    //fillPopulationText();
     updateGridCells(nextGenStyle);
 }
 
@@ -174,7 +209,7 @@ function newColor(cell, ir, ic) {
     var rows = gameGridCells.length;
     var cols = gameGridCells[0].length;
     coords = {start: {x: ir-1, y: ic-1}, end: {x: ir+1, y: ic+1}};
-    
+    var oldColor = cell.graphics.instructions[2].style;
     if (coords.start.x < 0)
         coords.start.x = 0;
     if (coords.start.y < 0)
@@ -195,10 +230,16 @@ function newColor(cell, ir, ic) {
         }
     }
     
-    if (liveCount > 3 || liveCount < 2)
+    if ((liveCount > 3 || liveCount < 2) && oldColor == LIVE_CELL_COLOR)
+    {
+        population--;
         return DEAD_CELL_COLOR;
-    else if (liveCount == 3)  
+    }
+    else if (liveCount == 3 && oldColor == DEAD_CELL_COLOR)  
+    {
+        population++;
         return LIVE_CELL_COLOR;
+    }
     else 
-        return cell.graphics.instructions[2].style;
+        return oldColor;
 }
