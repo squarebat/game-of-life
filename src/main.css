@@ -1,0 +1,12 @@
+.canvas-style {
+    background :#00004d;
+}
+
+body {
+    background : #00004d;
+}
+
+@font-face {
+    font-family: "Flipps-Regular";
+    src: url('/Flipps-Regular.otf'); 
+}
