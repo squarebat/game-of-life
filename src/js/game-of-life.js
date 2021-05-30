@@ -10,7 +10,7 @@ var DIALOG_BG_COLOR = "#ffffff";
 var LIVE_CELL_COLOR = "#ffffff";
 var DEAD_CELL_COLOR = "#00004d";
 var CELL_WIDTH = 40;
-var GAME_CELL_WIDTH = 3;
+var GAME_CELL_WIDTH = 20;
 var font = "Courier"
 var gameGrid;
 var gameGridCells = [];
