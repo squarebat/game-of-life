@@ -4,13 +4,13 @@ var messageField;
 var inputDialog;
 var inputGrid;
 var inputGridCells = [];		
-var inputGridRows = 11;
-var inputGridCols = 11;
+var inputGridRows = 54;
+var inputGridCols = 19;
 var DIALOG_BG_COLOR = "#ffffff";
 var LIVE_CELL_COLOR = "#ffffff";
 var DEAD_CELL_COLOR = "#00004d";
-var CELL_WIDTH = 40;
-var GAME_CELL_WIDTH = 20;
+var CELL_WIDTH = 20;
+var GAME_CELL_WIDTH = 15;
 var font = "Courier"
 var gameGrid;
 var gameGridCells = [];
@@ -40,7 +40,7 @@ function fillText()
     messageField.maxWidth = 1000;
     messageField.shadow = new createjs.Shadow(LIVE_CELL_COLOR, 0, 0, 5);
     
-    gameIntroStr = "The Game of Life is a cellular automaton,\n"  
+    gameIntroStr = "The Game of Life is a cellular automation,\n"  
     + "and was invented by Cambridge mathematician John Conway. It consists of a\n"
     + "collection of cells which, based on a few mathematical rules, can live, die\n"
     + "or multiply. Depending on the initial conditions, the cells form various patterns\n"
@@ -137,13 +137,13 @@ function initDialog()
     inputGrid.addChild(bg);
     fillInputGrid();
     
-    var msg_string = `Click anywhere on the grid to create the initial \n \n generation. Then press any key to start game`;
-    var msg = new createjs.Text(msg_string, `bold 15px ${font}`, DEAD_CELL_COLOR);
+    var msg_string = `Click anywhere on the grid to create the initial generation. Then press any key to start game`;
+    var msg = new createjs.Text(msg_string, `bold 18px ${font}`, DEAD_CELL_COLOR);
     //msg.shadow = new createjs.Shadow(DEAD_CELL_COLOR, 0, 0, 3);
     msg.maxWidth = 1000;
     textCenterAlign(msg);
 	msg.x = width / 2;
-    msg.y = (inputGridRows+text_pad)*cell_width;
+    msg.y = (inputGridCols+text_pad)*cell_width + 10;
     
     inputGrid.addChild(msg);
     document.addEventListener("keydown", startGame);
