@@ -14,6 +14,11 @@ var font = "Courier"
 var gameGrid;
 var gameGridCells = [];
 var NEXT_GEN_TIME = 0;
+var intervalId;
+var resetField;
+var stopField;
+var saveInitial = [];
+
 function init() {
     console.trace('init');
 	canvas = document.getElementById("gameCanvas");
@@ -63,10 +68,27 @@ function fillText()
     stage.addChild(rules);
 }
 
+function fillInstructionText()
+{
+    resetField = new createjs.Text(`Press R to Restart`, `22px ${font}`, LIVE_CELL_COLOR);
+    //resetField.shadow = new createjs.Shadow(LIVE_CELL_COLOR, 0, 0, 3);
+    stopField = new createjs.Text(`Press P to Pause`, `22px ${font}`, LIVE_CELL_COLOR);
+    var resumeField = new createjs.Text(`Press Q to Resume`, `22px ${font}`, LIVE_CELL_COLOR);
+    //stopField.shadow = new createjs.Shadow(LIVE_CELL_COLOR, 0, 0, 3);
+    placeText(stopField,0,5);  
+    placeText(resumeField,0,25);  
+    placeText(resetField,0,45);
+    
+    stage.addChild(resetField);
+    stage.addChild(resumeField);
+    stage.addChild(stopField);
+}
+
 function placeText(field, x, y)
 {
     [field.x, field.y] = [x, y];
 }
+
 function handleClick() {
     console.trace('handleClick');
     canvas.onclick = null;
@@ -112,14 +134,33 @@ function startGame()
 {
     console.trace('startGame');
     document.removeEventListener("keydown", startGame);
-    stage.removeChild(inputGrid);
+    stage.removeAllChildren();
     initGameGrid();
     stage.addChild(gameGrid);
+    fillInstructionText()
     //document.addEventListener("keydown", createNextGeneration);
-    setInterval(createNextGeneration, NEXT_GEN_TIME);    
+    document.addEventListener("keydown", instruction);
+    intervalId = setInterval(createNextGeneration, NEXT_GEN_TIME);    
     stage.update();
 }
 
+function instruction(event) {
+    switch (event.key)
+    {
+        case 'p':
+            clearInterval(intervalId);
+            break;
+        case 'q':
+            intervalId = setInterval(createNextGeneration, NEXT_GEN_TIME);
+            break;
+        case 'r':
+            clearInterval(intervalId);
+            gameGridCells = [];
+            gameGrid = null;
+            startGame();
+            break;
+    }
+}
 function fillInputGrid()
 {
     console.trace('fillInputGrid');
