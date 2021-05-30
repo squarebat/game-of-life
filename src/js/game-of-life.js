@@ -10,10 +10,11 @@ var DIALOG_BG_COLOR = "#ffffff";
 var LIVE_CELL_COLOR = "#ffffff";
 var DEAD_CELL_COLOR = "#00004d";
 var CELL_WIDTH = 40;
+var GAME_CELL_WIDTH = 3;
 var font = "Courier"
 var gameGrid;
 var gameGridCells = [];
-var NEXT_GEN_TIME = 100;
+var NEXT_GEN_TIME = 0;
 var intervalId;
 var resetField;
 var stopField;
@@ -192,7 +193,7 @@ function fillInputGrid()
 
 function initGameGrid()
 {
-    var cell_width = CELL_WIDTH / 2;
+    var cell_width = GAME_CELL_WIDTH;
     console.log({cell_width});
     rows = canvas.width/cell_width;
     cols = canvas.height/cell_width;
