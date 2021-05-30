@@ -13,11 +13,16 @@ var CELL_WIDTH = 40;
 var font = "Courier"
 var gameGrid;
 var gameGridCells = [];
-var NEXT_GEN_TIME = 0;
+var NEXT_GEN_TIME = 100;
 var intervalId;
 var resetField;
 var stopField;
 var saveInitial = [];
+
+var populationField;
+var population = 0;
+var iterField;
+var iterCount = 1;
 
 function init() {
     console.trace('init');
@@ -66,6 +71,19 @@ function fillText()
     stage.addChild(gameIntro);
     stage.addChild(rulesTitle);
     stage.addChild(rules);
+}
+
+function fillPopulationText()
+{
+    iterField = new createjs.Text(`Generation: ${iterCount}`, `22px ${font}`, LIVE_CELL_COLOR);
+    placeText(iterField,0,0);  
+    stage.addChild(iterField);
+}
+
+function updateGen()
+{
+    iterField.text =  `Generation: ${iterCount}`;
+    stage.update();
 }
 
 function fillInstructionText()
@@ -137,7 +155,8 @@ function startGame()
     stage.removeAllChildren();
     initGameGrid();
     stage.addChild(gameGrid);
-    fillInstructionText()
+    fillInstructionText();
+    //fillPopulationText();
     //document.addEventListener("keydown", createNextGeneration);
     document.addEventListener("keydown", instruction);
     intervalId = setInterval(createNextGeneration, NEXT_GEN_TIME);    
@@ -194,11 +213,9 @@ function updateGridCells(styles) {
     stage.update();
 }
 
-function isAlive(color) {
-    return color == LIVE_CELL_COLOR ? true : false;
-}
-
 function createNextGeneration() {
+    iterCount++;
+    //updateGen();
     var nextGenStyle = [];
     gameGridCells.forEach((row, i) => {
         genRow = [];

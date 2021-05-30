@@ -4,7 +4,7 @@ function createCell(cell_width, addListener = false, addShadow = false, live = f
     graphics = new createjs.Graphics().beginFill(color).drawRect(0, 0, cell_width, cell_width);
 
     var cell = new createjs.Shape(graphics);
-    if (addShadow)
+    // if (addShadow)
         cell.shadow = new createjs.Shadow(LIVE_CELL_COLOR, 0, 0, 1);
     if (addListener)
         cell.addEventListener("click", updateCell);
